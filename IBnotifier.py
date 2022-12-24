@@ -1,16 +1,13 @@
 import json
 import requests
 import sys
-import pyautogui
-import pandas as pd
 import time
 from os import system
-from requests.auth import HTTPBasicAuth
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 posted=[]
-ver="1.0.10"
+ver="1.11"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
@@ -19,11 +16,22 @@ with open('WEBHOOK-LINK.txt','r') as f:
 
 ##grab related URLs as actionable variables
 #Grab webhook URL from file
-#WEBHOOK_URI=file
+WEBHOOK_URI=file
+if file=='placeholder':
+    print("You Did Not setup the Webhook! Please enter your webhook URL into WEBHOOK-LINK.txt to continue")
+    time.sleep(10)
+    # with open('Error Log.txt', 'r+') as file:  
+    #     file.seek(0, 0) 
+    #     file.write('\n' + 'Webhook not provided'+time.asctime()) 
+    sys.exit('Webhook Not Provided')
+elif "https://hooks.chime.aws/incomingwebhooks" is not file:
+    print("Provided Webhook link is Invalid")
+    time.sleep(10)
+    sys.exit('Invalid Webhook')
+
 #testing webhook
-WEBHOOK_URI = 'https://hooks.chime.aws/incomingwebhooks/9be51f5c-cf60-4f5a-bfe5-869f54fa9b11?token=QnBTOTZFY0R8MXx6MllJZEtPU2ZGeVg3Z0xGQmtVX2NYV18xc1lXNEYyOWt2cVVXVzQyQ19V'
+#WEBHOOK_URI = 'https://hooks.chime.aws/incomingwebhooks/9be51f5c-cf60-4f5a-bfe5-869f54fa9b11?token=QnBTOTZFY0R8MXx6MllJZEtPU2ZGeVg3Z0xGQmtVX2NYV18xc1lXNEYyOWt2cVVXVzQyQ19V'
 IBURL= 'https://trans-logistics.amazon.com/ssp/dock/ib/'
-MidwayURL='https://midway-auth.amazon.com/login?next=%2FSSO%2Fredirect%3Fredirect_uri%3Dhttps%253A%252F%252Ftrans-logistics.amazon.com%252Fssp%252Fdock%252Fib%26client_id%3Dtrans-logistics.amazon.com%253A443%26scope%3Dopenid%26response_type%3Did_token%26nonce%3D8baf6b7631dfa583158aa671f99d7b4c36a0a4ced8204bd22146997d654cd322%26sentry_handler_version%3Dmidwaygateway%26response_mode%3Dquery%26acr_values%3Dkerberos%26use_sentry_key%3D1%26state%3D%252Fssp%252Fdock%252Fib&require_digital_identity=false#midway'
 
 ##posting setup message
 ##Connect to webhook
@@ -36,7 +44,7 @@ def post_message(msg):
             json={"Content": msg})
         return json.loads(response.text)
     except:
-        return response.text
+        return "Fix your webhook loser"
 
 ##Load webpage to scrape
 response=requests.get(IBURL, verify=False)
@@ -54,15 +62,12 @@ req_res = post_message(message)
 while True:
     t= time.time()
 
-    ##Press the Shift Key to keep laptop awake
-    pyautogui.press('shift')
 
     ##reset vars for this loop
     system('cls')
     print()
     print("INBOUND NOTIFIER")
     print("Developed by Zac Garbos( garbosz)")
-    print("special thanks to Ian Rae(ianra) for helping bugfix")
     print("VER."+ver)
     print("Origin Station: "+Home)
 
@@ -169,18 +174,6 @@ while True:
     print(chimeout)
     print("---MESSAGE---")
 
-    ##Connect to webhook
-    print("Connecting to Webhook")
-    def post_message(msg):
-        response = None
-        try:
-            response = requests.post(
-                url=WEBHOOK_URI,
-                json={"Content": msg})
-            return json.loads(response.text)
-        except:
-            return response.text
-
     ##Load webpage to scrape
     response=requests.get(IBURL, verify=False)
     #print(response.text)
@@ -193,6 +186,9 @@ while True:
     print("Posting")
     req_res = post_message(message)
     #print(json.dumps(req_res, indent=2))
+    #limit length of posted Vrids to 16 to keep memory in check
+    if (len(posted)>=17):
+        posted.pop(0)
     print("Message posted")
     print("---POSTED VRIDS---")
     print(posted)
