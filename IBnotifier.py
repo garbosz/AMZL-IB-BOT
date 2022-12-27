@@ -19,13 +19,16 @@ with open('WEBHOOK-LINK.txt','r') as f:
 WEBHOOK_URI=file
 if file=='placeholder':
     print("You Did Not setup the Webhook! Please enter your webhook URL into WEBHOOK-LINK.txt to continue")
+    with open('errorLog.txt', 'a+') as file:  
+        file.seek(0, 0) 
+        file.write('\n' + 'Webhook not provided: '+time.asctime()) 
     time.sleep(10)
-    # with open('Error Log.txt', 'r+') as file:  
-    #     file.seek(0, 0) 
-    #     file.write('\n' + 'Webhook not provided'+time.asctime()) 
     sys.exit('Webhook Not Provided')
 elif "https://hooks.chime.aws/incomingwebhooks" is not file:
     print("Provided Webhook link is Invalid")
+    with open('errorLog.txt', 'a+') as file:  
+        file.seek(0, 0) 
+        file.write('\n' + 'Invalid Webhook: '+time.asctime()) 
     time.sleep(10)
     sys.exit('Invalid Webhook')
 
@@ -44,6 +47,9 @@ def post_message(msg):
             json={"Content": msg})
         return json.loads(response.text)
     except:
+        with open('errorLog.txt', 'a+') as file:  
+            file.seek(0, 0) 
+            file.write('\n' + 'Unable to connect to Webhook: '+time.asctime()) 
         return "Fix your webhook loser"
 
 ##Load webpage to scrape
@@ -88,6 +94,9 @@ while True:
         message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue"
         parsed=""
         req_res = post_message(message)
+        with open('errorLog.txt', 'a+') as file:  
+            file.seek(0, 0) 
+            file.write('\n' + 'VPN Expired: '+time.asctime()) 
         sys.exit('VPN Expired')
     #print(parsed)
     driver.close()
