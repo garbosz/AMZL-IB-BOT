@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 posted=[]
-ver="1.11"
+ver="1.13"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
@@ -24,7 +24,9 @@ if file=='placeholder':
         file.write('\n' + 'Webhook not provided: '+time.asctime()) 
     time.sleep(10)
     sys.exit('Webhook Not Provided')
-elif "https://hooks.chime.aws/incomingwebhooks" is not file:
+elif "https://hooks.chime.aws/incomingwebhooks" in file:
+    print("Webhook Link Valid...Continuing")
+else:
     print("Provided Webhook link is Invalid")
     with open('errorLog.txt', 'a+') as file:  
         file.seek(0, 0) 
