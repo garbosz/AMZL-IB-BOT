@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 posted=[]
-ver="1.13"
+ver="1.14"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
@@ -19,18 +19,18 @@ with open('WEBHOOK-LINK.txt','r') as f:
 WEBHOOK_URI=file
 if file=='placeholder':
     print("You Did Not setup the Webhook! Please enter your webhook URL into WEBHOOK-LINK.txt to continue")
-    with open('errorLog.txt', 'a+') as file:  
-        file.seek(0, 0) 
-        file.write('\n' + 'Webhook not provided: '+time.asctime()) 
+    with open('errorLog.txt', 'a+') as error:  
+        error.seek(0, 0) 
+        error.write('\n' + 'Webhook not provided: '+time.asctime()) 
     time.sleep(10)
     sys.exit('Webhook Not Provided')
 elif "https://hooks.chime.aws/incomingwebhooks" in file:
     print("Webhook Link Valid...Continuing")
 else:
     print("Provided Webhook link is Invalid")
-    with open('errorLog.txt', 'a+') as file:  
-        file.seek(0, 0) 
-        file.write('\n' + 'Invalid Webhook: '+time.asctime()) 
+    with open('errorLog.txt', 'a+') as error:  
+        error.seek(0, 0) 
+        error.write('\n' + 'Invalid Webhook: '+time.asctime()) 
     time.sleep(10)
     sys.exit('Invalid Webhook')
 
@@ -49,9 +49,9 @@ def post_message(msg):
             json={"Content": msg})
         return json.loads(response.text)
     except:
-        with open('errorLog.txt', 'a+') as file:  
-            file.seek(0, 0) 
-            file.write('\n' + 'Unable to connect to Webhook: '+time.asctime()) 
+        with open('errorLog.txt', 'a+') as error:  
+            error.seek(0, 0) 
+            error.write('\n' + 'Unable to connect to Webhook: '+time.asctime()) 
         return "Fix your webhook loser"
 
 ##Load webpage to scrape
@@ -82,9 +82,19 @@ while True:
     ##selenium loads data from page
     print("selecting URL")
     driver=webdriver.Chrome('/Downloads/chromedriver_win32/chromedriver')
+    driver.implicitly_wait(10)
     #print("opening URL")
-    driver.get(IBURL)
-    time.sleep(4)
+    try:
+        driver.get(IBURL)
+        time.sleep(31)
+    except:
+        print("Unable to load chrome! Check if its installed and using the latest version")
+        with open('errorLog.txt', 'a+') as error:  
+            error.seek(0, 0) 
+            error.write('\n' + 'Chrome Error: '+time.asctime()) 
+        time.sleep(10)
+        sys.exit('Chrome Error')
+    #time.sleep(4)
     print("finding table in xpath")
     try:
         trailers=driver.find_element("xpath",'//*[@id="dashboard"]')
@@ -96,9 +106,9 @@ while True:
         message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue"
         parsed=""
         req_res = post_message(message)
-        with open('errorLog.txt', 'a+') as file:  
-            file.seek(0, 0) 
-            file.write('\n' + 'VPN Expired: '+time.asctime()) 
+        with open('errorLog.txt', 'a+') as error:  
+            error.seek(0, 0) 
+            error.write('\n' + 'VPN Expired: '+time.asctime()) 
         sys.exit('VPN Expired')
     #print(parsed)
     driver.close()
