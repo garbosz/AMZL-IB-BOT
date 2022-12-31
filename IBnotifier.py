@@ -2,12 +2,22 @@ import json
 import requests
 import sys
 import time
+import atexit
 from os import system
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+##handle when user presses X button
+def onexit():
+    print("exiting now")
+    with open('errorLog.txt', 'a+') as error:  
+        error.seek(0, 0) 
+        error.write('\n' + 'program closed: '+time.asctime()) 
+    time.sleep(10)
+    sys.exit('program closed')
+
 posted=[]
-ver="1.14"
+ver="1.15"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
@@ -86,7 +96,7 @@ while True:
     #print("opening URL")
     try:
         driver.get(IBURL)
-        time.sleep(31)
+        time.sleep(3)
     except:
         print("Unable to load chrome! Check if its installed and using the latest version")
         with open('errorLog.txt', 'a+') as error:  
