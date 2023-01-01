@@ -44,8 +44,6 @@ else:
     time.sleep(10)
     sys.exit('Invalid Webhook')
 
-#testing webhook
-#WEBHOOK_URI = 'https://hooks.chime.aws/incomingwebhooks/9be51f5c-cf60-4f5a-bfe5-869f54fa9b11?token=QnBTOTZFY0R8MXx6MllJZEtPU2ZGeVg3Z0xGQmtVX2NYV18xc1lXNEYyOWt2cVVXVzQyQ19V'
 IBURL= 'https://trans-logistics.amazon.com/ssp/dock/ib/'
 
 ##posting setup message
