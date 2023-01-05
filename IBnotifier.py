@@ -3,6 +3,7 @@ import requests
 import sys
 import time
 import atexit
+import keyboard
 from os import system
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -17,7 +18,7 @@ def onexit():
     sys.exit('program closed')
 
 posted=[]
-ver="1.15b"
+ver="1.15.1"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
@@ -46,6 +47,12 @@ else:
 
 IBURL= 'https://trans-logistics.amazon.com/ssp/dock/ib/'
 
+if keyboard.read_key("alt"):
+    backup="TRUE"
+    print("BACKUP MODE ENABLED")
+else:
+    backup="FALSE"
+
 ##posting setup message
 ##Connect to webhook
 print("Connecting to Webhook")
@@ -68,22 +75,26 @@ response=requests.get(IBURL, verify=False)
 print("connected")
 
 ## Get the message to send as a parameter
-message = "INBOUND BOT Initiated\nVer."+ver+"\nPrimary Bot has failed, Backup Bot initiated remotely\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
+if backup=="TRUE":
+    message = "INBOUND BOT Initiated\nVer."+ver+"\nPrimary Bot has failed, Backup Bot initiated\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
+else:
+    message = "INBOUND BOT Initiated\nVer."+ver+"\nScript will now process through any current manifests\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
 
 ## Post the message
 print("Posting")
 req_res = post_message(message)
 
 ##ask user for previously posted VRIDs to mitigate duplicate posting
-# ask the user to input a list of strings, separated by commas
-input_string = input("Enter a list of posted VRIDs, separated by commas: ")
+if backup=="TRUE":
+    # ask the user to input a list of strings, separated by commas
+    input_string = input("Enter a list of posted VRIDs, separated by commas: ")
 
-# split the input string into a list of strings
-input_list = input_string.split(',')
+    # split the input string into a list of strings
+    input_list = input_string.split(',')
 
-# iterate over the input list, stripping any leading/trailing whitespace
-for item in input_list:
-  posted.append(item.strip())
+    # iterate over the input list, stripping any leading/trailing whitespace
+    for item in input_list:
+        posted.append(item.strip())
 
 ##Main Loop
 while True:

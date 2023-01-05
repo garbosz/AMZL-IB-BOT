@@ -4,3 +4,4 @@ pip install requests
 pip install selenium
 pip install chromedriver-py
 pip install pyautogui
+pip install keyboard
