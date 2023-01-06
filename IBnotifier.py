@@ -18,7 +18,7 @@ def onexit():
     sys.exit('program closed')
 
 posted=[]
-ver="1.15.1"
+ver="1.15.2"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
