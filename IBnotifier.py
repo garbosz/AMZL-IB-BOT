@@ -9,13 +9,12 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 ##handle when user presses X button
-def onexit():
-    print("exiting now")
+def on_exit():
     with open('errorLog.txt', 'a+') as error:  
         error.seek(0, 0) 
-        error.write('\n' + 'program closed: '+time.asctime()) 
-    time.sleep(10)
-    sys.exit('program closed')
+        error.write('\n' + 'Script Closed: '+time.asctime()) 
+
+atexit.register(on_exit)
 
 posted=[]
 ver="1.15.2"
@@ -141,6 +140,7 @@ while True:
         print("parsing data")
         parsed = trailers.text.split()
     except:
+        print("FAILED TO FIND DATA ON PAGE")
         trailers=[]
         message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue"
         parsed=""
