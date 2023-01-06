@@ -47,11 +47,20 @@ else:
 
 IBURL= 'https://trans-logistics.amazon.com/ssp/dock/ib/'
 
-if keyboard.read_key("alt"):
-    backup="TRUE"
-    print("BACKUP MODE ENABLED")
-else:
-    backup="FALSE"
+start_time = time.time()
+while True:
+    # Check if a key has been pressed
+    if keyboard.is_pressed("alt"):
+        backup = True
+        break
+    
+    # Wait for 0.1 seconds before checking again
+    time.sleep(0.1)
+    
+    # If no key has been pressed for 5 seconds, set key_pressed to False
+    if time.time() - start_time > 3:
+        backup = False
+        break
 
 ##posting setup message
 ##Connect to webhook
@@ -75,7 +84,7 @@ response=requests.get(IBURL, verify=False)
 print("connected")
 
 ## Get the message to send as a parameter
-if backup=="TRUE":
+if backup==True:
     message = "INBOUND BOT Initiated\nVer."+ver+"\nPrimary Bot has failed, Backup Bot initiated\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
 else:
     message = "INBOUND BOT Initiated\nVer."+ver+"\nScript will now process through any current manifests\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
@@ -85,7 +94,7 @@ print("Posting")
 req_res = post_message(message)
 
 ##ask user for previously posted VRIDs to mitigate duplicate posting
-if backup=="TRUE":
+if backup==True:
     # ask the user to input a list of strings, separated by commas
     input_string = input("Enter a list of posted VRIDs, separated by commas: ")
 
