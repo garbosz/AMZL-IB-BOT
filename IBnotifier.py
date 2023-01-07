@@ -255,7 +255,8 @@ while True:
     print("---POSTED VRIDS---")
 
     ##Restart the loop
-    print(time.asctime())
-    print("waiting 5 minutes from last update")
+    lastCheck=time.time()
+    print("Time of last Update: "+time.asctime())
+    print("waiting 5 minutes")
     t= time.time()-t
     time.sleep(300-t)
