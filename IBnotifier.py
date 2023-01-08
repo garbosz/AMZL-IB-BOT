@@ -8,25 +8,31 @@ from os import system
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-##handle when user presses X button
-def onexit():
-    print("exiting now")
-    with open('errorLog.txt', 'a+') as error:  
-        error.seek(0, 0) 
-        error.write('\n' + 'program closed: '+time.asctime()) 
-    time.sleep(10)
-    sys.exit('program closed')
-
 posted=[]
-ver="1.15.2"
+ver="1.15.3"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
 with open('WEBHOOK-LINK.txt','r') as f:
     file=f.read()
 
-##grab related URLs as actionable variables
-#Grab webhook URL from file
+##post some welcome stuff for setup
+print("INBOUND NOTIFIER")
+print("Developed by Zac Garbos( garbosz)")
+print("VER."+ver)
+print("Origin Station: "+Home)
+print("\nRunning Setup...")
+
+##handle when user presses X button
+def on_exit():
+    with open('errorLog.txt', 'a+') as error:  
+        error.seek(0, 0) 
+        error.write('\n' + 'Script Closed: '+time.asctime()) 
+
+atexit.register(on_exit)
+
+##verify Webhook from webhook link file, as well as defining IB link
+print("Verifying WEBHOOK-LINK.txt")
 WEBHOOK_URI=file
 if file=='placeholder':
     print("You Did Not setup the Webhook! Please enter your webhook URL into WEBHOOK-LINK.txt to continue")
@@ -47,6 +53,7 @@ else:
 
 IBURL= 'https://trans-logistics.amazon.com/ssp/dock/ib/'
 
+##check whether alt key is pressed to determing backup mode or normal operation
 start_time = time.time()
 while True:
     # Check if a key has been pressed
@@ -62,9 +69,7 @@ while True:
         backup = False
         break
 
-##posting setup message
-##Connect to webhook
-print("Connecting to Webhook")
+##post to webhook function
 def post_message(msg):
     response = None
     try:
@@ -79,21 +84,21 @@ def post_message(msg):
         return "Fix your webhook loser"
 
 ##Load webpage to scrape
+print("Loading IB")
 response=requests.get(IBURL, verify=False)
-#print(response.text)
-print("connected")
 
-## Get the message to send as a parameter
+
+##Load Initiation post, based on status of backup mode 
 if backup==True:
     message = "INBOUND BOT Initiated\nVer."+ver+"\nPrimary Bot has failed, Backup Bot initiated\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
 else:
     message = "INBOUND BOT Initiated\nVer."+ver+"\nScript will now process through any current manifests\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
 
 ## Post the message
-print("Posting")
+print("Posting Initiation to Chime")
 req_res = post_message(message)
 
-##ask user for previously posted VRIDs to mitigate duplicate posting
+##asks user for previously posted VRIDs to mitigate duplicate posting
 if backup==True:
     # ask the user to input a list of strings, separated by commas
     input_string = input("Enter a list of posted VRIDs, separated by commas: ")
@@ -106,12 +111,13 @@ if backup==True:
         posted.append(item.strip())
 
 ##Main Loop
+print("Entering Main Process Loop")
 while True:
     t= time.time()
 
 
-    ##reset vars for this loop
-    system('cls')
+    ##reset cmd window for current loop
+    #system('cls')
     print()
     print("INBOUND NOTIFIER")
     print("Developed by Zac Garbos( garbosz)")
@@ -119,10 +125,10 @@ while True:
     print("Origin Station: "+Home)
 
     ##selenium loads data from page
-    print("selecting URL")
+    print("Booting Webdriver")
     driver=webdriver.Chrome('/Downloads/chromedriver_win32/chromedriver')
     driver.implicitly_wait(10)
-    #print("opening URL")
+    print("Loading IB Page")
     try:
         driver.get(IBURL)
         time.sleep(3)
@@ -133,14 +139,13 @@ while True:
             error.write('\n' + 'Chrome Error: '+time.asctime()) 
         time.sleep(10)
         sys.exit('Chrome Error')
-    #time.sleep(4)
     print("finding table in xpath")
     try:
         trailers=driver.find_element("xpath",'//*[@id="dashboard"]')
-        print("content loaded")
-        print("parsing data")
+        print("content found")
         parsed = trailers.text.split()
     except:
+        print("FAILED TO FIND DATA ON PAGE")
         trailers=[]
         message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue"
         parsed=""
@@ -149,14 +154,13 @@ while True:
             error.seek(0, 0) 
             error.write('\n' + 'VPN Expired: '+time.asctime()) 
         sys.exit('VPN Expired')
-    #print(parsed)
     driver.close()
 
-    ##Process Data
+    ##Process Data Pulled from selenium
+    print("Parsing Data from IB")
     #set up array
     VRID=[]
     MANI=[]
-    #data=[]
     pointer=20
     i=20
     for x in parsed:
@@ -191,7 +195,7 @@ while True:
             else:
                 i=i
         except:
-            print("end of file")
+            print("Done...")
             break
 
     ##fix non numerical manifests
@@ -203,15 +207,15 @@ while True:
             print("Not a Number setting to 0")
             MANI[x]='0'
 
-    ##testing spot print array of VRID AND MANI
-    print("Found VRIDs/Manifests")
+    ##print array of VRID AND MANI
+    print("Parsed VRIDs/Manifests")
     for x in range(0,len(VRID)):
         print(VRID[x]+": "+MANI[x])
     
 
         
     ##See which trailers are manifested
-    print("CHECKING MANIFESTS")
+    print("CHECKING FOR MANIFESTS")
     chimeout=""
     tempmsg=""
     for x in range(0,len(VRID)):
@@ -230,22 +234,18 @@ while True:
         except:
             print("Reached end of list")
         
+    ##sample of the current message being posted, if its blank then no message was posted
     print("---MESSAGE---")
     print(chimeout)
     print("---MESSAGE---")
-
-    ##Load webpage to scrape
-    response=requests.get(IBURL, verify=False)
-    #print(response.text)
-    print("connected")
 
     ## Get the message to send as a parameter
     message = chimeout
 
     ## Post the message
-    print("Posting")
+    print("Posting to Chime")
     req_res = post_message(message)
-    #print(json.dumps(req_res, indent=2))
+
     #limit length of posted Vrids to 16 to keep memory in check
     if (len(posted)>=17):
         posted.pop(0)
@@ -255,7 +255,8 @@ while True:
     print("---POSTED VRIDS---")
 
     ##Restart the loop
-    print(time.asctime())
-    print("waiting 5 minutes from last update")
+    lastCheck=time.time()
+    print("Time of last Update: "+time.asctime())
+    print("waiting 5 minutes")
     t= time.time()-t
     time.sleep(300-t)
