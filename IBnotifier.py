@@ -117,7 +117,7 @@ while True:
 
 
     ##reset cmd window for current loop
-    #system('cls')
+    system('cls')
     print()
     print("INBOUND NOTIFIER")
     print("Developed by Zac Garbos( garbosz)")
