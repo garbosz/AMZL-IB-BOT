@@ -224,14 +224,14 @@ while True:
             print("Checking "+VRID[x])
             if MANI[x]!='0':
                 if (VRID[x] in posted):
-                    print("Already Notified")
+                    print("\tAlready Notified")
                 else:
-                    chimeout="New Manifest!"+"\n"+"VRID:"+VRID[x]+"\n"+"Volume:"+MANI[x]
+                    chimeout="\tNew Manifest!"+"\n"+"VRID:"+VRID[x]+"\n"+"Volume:"+MANI[x]
                     posted.append(VRID[x])
                     print("added "+VRID[x]+" To posted list")
                     break
             else:
-                print("Not manifested")
+                print("\tNot manifested")
         except:
             print("Reached end of list")
         
