@@ -213,7 +213,9 @@ while True:
     for x in range(0,len(VRID)):
         print(VRID[x]+": "+MANI[x])
     
-
+    ##calculate total manifested volume, this may fall out of line with actual onsite once LHs start being completed
+    numani=list(map(int,MANI))
+    totvol=sum(numani)
         
     ##See which trailers are manifested
     print("Checking for New Manifests")
@@ -226,9 +228,9 @@ while True:
                 if (VRID[x] in posted):
                     print("\tAlready Notified")
                 else:
-                    chimeout="\tNew Manifest!"+"\n"+"VRID:"+VRID[x]+"\n"+"Volume:"+MANI[x]
+                    chimeout="New Manifest!"+"\n"+"VRID:"+VRID[x]+"\n"+"Volume:"+MANI[x]
                     posted.append(VRID[x])
-                    print("added "+VRID[x]+" To posted list")
+                    print("\tadded "+VRID[x]+" To posted list")
                     break
             else:
                 print("\tNot manifested")
@@ -255,6 +257,9 @@ while True:
     print(posted)
     print("---POSTED VRIDS---")
 
+    ##print current total, this will be the total of all manifested VRIDS regardless if theyve been posted or not
+    print(f"Current Total of Manifested VRIDS: {totvol}")
+    
     ##Restart the loop
     lastCheck=time.time()
     print("Time of last Update: "+time.asctime())
