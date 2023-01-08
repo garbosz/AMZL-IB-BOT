@@ -143,6 +143,7 @@ while True:
     try:
         trailers=driver.find_element("xpath",'//*[@id="dashboard"]')
         print("content found")
+        print("Importing...")
         parsed = trailers.text.split()
     except:
         print("FAILED TO FIND DATA ON PAGE")
