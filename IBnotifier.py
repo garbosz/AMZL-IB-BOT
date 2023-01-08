@@ -9,7 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 posted=[]
-ver="1.15.3"
+ver="1.15.4"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
@@ -216,7 +216,7 @@ while True:
 
         
     ##See which trailers are manifested
-    print("CHECKING FOR MANIFESTS")
+    print("Checking for New Manifests")
     chimeout=""
     tempmsg=""
     for x in range(0,len(VRID)):
@@ -244,7 +244,7 @@ while True:
     message = chimeout
 
     ## Post the message
-    print("Posting to Chime")
+    print("Posting to Chime(If Message sample above is blank then no message will be posted)")
     req_res = post_message(message)
 
     #limit length of posted Vrids to 16 to keep memory in check
