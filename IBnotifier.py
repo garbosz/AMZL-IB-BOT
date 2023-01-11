@@ -228,7 +228,7 @@ while True:
                 if (VRID[x] in posted):
                     print("\tAlready Notified")
                 else:
-                    chimeout="New Manifest!"+"\n"+"VRID:"+VRID[x]+"\n"+"Volume:"+MANI[x]
+                    chimeout="New Manifest!"+"\nVRID: "+VRID[x]+"\nVolume: "+MANI[x]+"\nTIME: "+time.asctime()
                     posted.append(VRID[x])
                     print("\tadded "+VRID[x]+" To posted list")
                     break
