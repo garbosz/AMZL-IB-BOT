@@ -9,7 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 posted=[]
-ver="1.15.3"
+ver="1.15.4"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
@@ -143,6 +143,7 @@ while True:
     try:
         trailers=driver.find_element("xpath",'//*[@id="dashboard"]')
         print("content found")
+        print("Importing...")
         parsed = trailers.text.split()
     except:
         print("FAILED TO FIND DATA ON PAGE")
@@ -212,10 +213,12 @@ while True:
     for x in range(0,len(VRID)):
         print(VRID[x]+": "+MANI[x])
     
-
+    ##calculate total manifested volume, this may fall out of line with actual onsite once LHs start being completed
+    numani=list(map(int,MANI))
+    totvol=sum(numani)
         
     ##See which trailers are manifested
-    print("CHECKING FOR MANIFESTS")
+    print("Checking for New Manifests")
     chimeout=""
     tempmsg=""
     for x in range(0,len(VRID)):
@@ -223,14 +226,14 @@ while True:
             print("Checking "+VRID[x])
             if MANI[x]!='0':
                 if (VRID[x] in posted):
-                    print("Already Notified")
+                    print("\tAlready Notified")
                 else:
                     chimeout="New Manifest!"+"\n"+"VRID:"+VRID[x]+"\n"+"Volume:"+MANI[x]
                     posted.append(VRID[x])
-                    print("added "+VRID[x]+" To posted list")
+                    print("\tadded "+VRID[x]+" To posted list")
                     break
             else:
-                print("Not manifested")
+                print("\tNot manifested")
         except:
             print("Reached end of list")
         
@@ -243,7 +246,7 @@ while True:
     message = chimeout
 
     ## Post the message
-    print("Posting to Chime")
+    print("Posting to Chime(If Message sample above is blank then no message will be posted)")
     req_res = post_message(message)
 
     #limit length of posted Vrids to 16 to keep memory in check
@@ -254,6 +257,9 @@ while True:
     print(posted)
     print("---POSTED VRIDS---")
 
+    ##print current total, this will be the total of all manifested VRIDS regardless if theyve been posted or not
+    print(f"Current Total of Manifested VRIDS: {totvol}")
+    
     ##Restart the loop
     lastCheck=time.time()
     print("Time of last Update: "+time.asctime())
