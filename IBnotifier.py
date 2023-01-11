@@ -90,9 +90,9 @@ response=requests.get(IBURL, verify=False)
 
 ##Load Initiation post, based on status of backup mode 
 if backup==True:
-    message = "INBOUND BOT Initiated\nVer."+ver+"\nPrimary Bot has failed, Backup Bot initiated\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
+    message = "INBOUND BOT Initiated\nVer."+ver+"\nPrimary Bot has failed, Backup Bot initiated\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()+"\nFor more info and to download the bot, visit:\nhttps://w.amazon.com/bin/view/Users/garbosz/Inbound-Bot/"
 else:
-    message = "INBOUND BOT Initiated\nVer."+ver+"\nScript will now process through any current manifests\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
+    message = "INBOUND BOT Initiated\nVer."+ver+"\nScript will now process through any current manifests\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()+"\nFor more info and to download the bot, visit:\nhttps://w.amazon.com/bin/view/Users/garbosz/Inbound-Bot/"
 
 ## Post the message
 print("Posting Initiation to Chime")
@@ -148,7 +148,7 @@ while True:
     except:
         print("FAILED TO FIND DATA ON PAGE")
         trailers=[]
-        message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue"
+        message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue\nFor more info and to download the bot, visit:\nhttps://w.amazon.com/bin/view/Users/garbosz/Inbound-Bot/"
         parsed=""
         req_res = post_message(message)
         with open('errorLog.txt', 'a+') as error:  
