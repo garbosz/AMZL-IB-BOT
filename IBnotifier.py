@@ -9,12 +9,15 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 posted=[]
-ver="1.15.4"
+ver="1.15.5"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
 with open('WEBHOOK-LINK.txt','r') as f:
     file=f.read()
+
+##set default colors for script
+system('color 7')
 
 ##post some welcome stuff for setup
 print("INBOUND NOTIFIER")
@@ -35,6 +38,7 @@ atexit.register(on_exit)
 print("Verifying WEBHOOK-LINK.txt")
 WEBHOOK_URI=file
 if file=='placeholder':
+    system('color 40')
     print("You Did Not setup the Webhook! Please enter your webhook URL into WEBHOOK-LINK.txt to continue")
     with open('errorLog.txt', 'a+') as error:  
         error.seek(0, 0) 
@@ -44,6 +48,7 @@ if file=='placeholder':
 elif "https://hooks.chime.aws/incomingwebhooks" in file:
     print("Webhook Link Valid...Continuing")
 else:
+    system('color 40')
     print("Provided Webhook link is Invalid")
     with open('errorLog.txt', 'a+') as error:  
         error.seek(0, 0) 
@@ -90,9 +95,10 @@ response=requests.get(IBURL, verify=False)
 
 ##Load Initiation post, based on status of backup mode 
 if backup==True:
-    message = "INBOUND BOT Initiated\nVer."+ver+"\nPrimary Bot has failed, Backup Bot initiated\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
+    system('color 02')
+    message = "INBOUND BOT Initiated\nVer."+ver+"\nPrimary Bot has failed, Backup Bot initiated\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()+"\nFor more info and to download the bot, visit:\nhttps://w.amazon.com/bin/view/Users/garbosz/Inbound-Bot/"
 else:
-    message = "INBOUND BOT Initiated\nVer."+ver+"\nScript will now process through any current manifests\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()
+    message = "INBOUND BOT Initiated\nVer."+ver+"\nScript will now process through any current manifests\nChecks will happen in 5 minute increments and will run until host systems VPN expires\nStarted @ "+time.asctime()+"\nFor more info and to download the bot, visit:\nhttps://w.amazon.com/bin/view/Users/garbosz/Inbound-Bot/"
 
 ## Post the message
 print("Posting Initiation to Chime")
@@ -118,6 +124,7 @@ while True:
 
     ##reset cmd window for current loop
     system('cls')
+    system('color 7')
     print()
     print("INBOUND NOTIFIER")
     print("Developed by Zac Garbos( garbosz)")
@@ -133,6 +140,7 @@ while True:
         driver.get(IBURL)
         time.sleep(3)
     except:
+        system('color 40')
         print("Unable to load chrome! Check if its installed and using the latest version")
         with open('errorLog.txt', 'a+') as error:  
             error.seek(0, 0) 
@@ -146,9 +154,10 @@ while True:
         print("Importing...")
         parsed = trailers.text.split()
     except:
+        system('color 40')
         print("FAILED TO FIND DATA ON PAGE")
         trailers=[]
-        message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue"
+        message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue\nFor more info and to download the bot, visit:\nhttps://w.amazon.com/bin/view/Users/garbosz/Inbound-Bot/"
         parsed=""
         req_res = post_message(message)
         with open('errorLog.txt', 'a+') as error:  
@@ -228,7 +237,7 @@ while True:
                 if (VRID[x] in posted):
                     print("\tAlready Notified")
                 else:
-                    chimeout="New Manifest!"+"\n"+"VRID:"+VRID[x]+"\n"+"Volume:"+MANI[x]
+                    chimeout="New Manifest!"+"\nVRID: "+VRID[x]+"\nVolume: "+MANI[x]+"\nTIME: "+time.asctime()
                     posted.append(VRID[x])
                     print("\tadded "+VRID[x]+" To posted list")
                     break
