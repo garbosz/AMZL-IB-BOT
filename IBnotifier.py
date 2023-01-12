@@ -9,7 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 posted=[]
-ver="1.15.4"
+ver="1.15.5"
 Home="DBO6"
 system("title "+"InBound Notifier")
 x=0
