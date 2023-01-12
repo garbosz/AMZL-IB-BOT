@@ -16,6 +16,8 @@ x=0
 with open('WEBHOOK-LINK.txt','r') as f:
     file=f.read()
 
+##set default colors for script
+system('color 7')
 ##post some welcome stuff for setup
 print("INBOUND NOTIFIER")
 print("Developed by Zac Garbos( garbosz)")
@@ -35,6 +37,7 @@ atexit.register(on_exit)
 print("Verifying WEBHOOK-LINK.txt")
 WEBHOOK_URI=file
 if file=='placeholder':
+    system('color 40')
     print("You Did Not setup the Webhook! Please enter your webhook URL into WEBHOOK-LINK.txt to continue")
     with open('errorLog.txt', 'a+') as error:  
         error.seek(0, 0) 
@@ -44,6 +47,7 @@ if file=='placeholder':
 elif "https://hooks.chime.aws/incomingwebhooks" in file:
     print("Webhook Link Valid...Continuing")
 else:
+    system('color 40')
     print("Provided Webhook link is Invalid")
     with open('errorLog.txt', 'a+') as error:  
         error.seek(0, 0) 
@@ -118,6 +122,7 @@ while True:
 
     ##reset cmd window for current loop
     system('cls')
+    system('color 7')
     print()
     print("INBOUND NOTIFIER")
     print("Developed by Zac Garbos( garbosz)")
@@ -133,6 +138,7 @@ while True:
         driver.get(IBURL)
         time.sleep(3)
     except:
+        system('color 40')
         print("Unable to load chrome! Check if its installed and using the latest version")
         with open('errorLog.txt', 'a+') as error:  
             error.seek(0, 0) 
@@ -146,6 +152,7 @@ while True:
         print("Importing...")
         parsed = trailers.text.split()
     except:
+        system('color 40')
         print("FAILED TO FIND DATA ON PAGE")
         trailers=[]
         message="VPN DISCONNECTED\nPlease re submit VPN and restart script to continue\nFor more info and to download the bot, visit:\nhttps://w.amazon.com/bin/view/Users/garbosz/Inbound-Bot/"
